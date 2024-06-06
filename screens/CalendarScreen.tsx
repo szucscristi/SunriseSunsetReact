@@ -1,68 +1,55 @@
-// src/screens/CalendarScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { getSunriseSunsetRange } from '../src/SunriseSunsetApi';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { formatISO, addMonths } from 'date-fns';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { getSunriseSunsetRange, SunriseSunsetData } from '../src/SunriseSunsetApi';
+import { RootStackParamList } from '../src/types';
+import { useTheme } from '../src/themeContext';
 
-interface SunriseSunsetData {
-  date: string;
-  sunrise: string;
-  sunset: string;
-}
+type CalendarScreenRouteProp = RouteProp<RootStackParamList, 'Calendar'>;
 
 const CalendarScreen: React.FC = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { latitude, longitude } = route.params as { latitude: number; longitude: number };
-
-  const [monthlySunriseSunsetData, setMonthlySunriseSunsetData] = useState<SunriseSunsetData[]>([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const { theme } = useTheme();
+  const route = useRoute<CalendarScreenRouteProp>();
+  const { latitude, longitude } = route.params;
+  const [data, setData] = useState<SunriseSunsetData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMonthlySunriseSunsetData = async () => {
+    const fetchData = async () => {
+      const today = new Date();
+      const endDate = new Date();
+      endDate.setMonth(today.getMonth() + 1);
+      const startDateString = today.toISOString().split('T')[0];
+      const endDateString = endDate.toISOString().split('T')[0];
+
       try {
-        const startDate = formatISO(new Date(), { representation: 'date' });
-        const endDate = formatISO(addMonths(new Date(), 1), { representation: 'date' });
-        const data = await getSunriseSunsetRange(latitude, longitude, startDate, endDate);
-        //setMonthlySunriseSunsetData(data);
-      } catch (error) {
-        setErrorMessage('Failed to fetch monthly sunrise/sunset data.');
+        const response = await getSunriseSunsetRange(latitude, longitude, startDateString, endDateString);
+        setData(response.results);
+      } catch (err) {
+        setError('Failed to fetch data');
       }
     };
 
-    fetchMonthlySunriseSunsetData();
+    fetchData();
   }, [latitude, longitude]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon.Button
-          name="arrow-back"
-          backgroundColor="transparent"
-          color="black"
-          size={32}
-          onPress={() => navigation.goBack()}
-        />
-        <Text style={styles.title}>Calendar for the next month</Text>
-      </View>
-
-      {errorMessage ? (
-        <Text style={styles.error}>{errorMessage}</Text>
-      ) : (
-        <FlatList
-          data={monthlySunriseSunsetData}
-          keyExtractor={(item) => item.date}
-          renderItem={({ item }) => (
-            <View style={styles.itemContainer}>
-              <Text style={styles.itemText}>Date: {item.date}</Text>
-              <Text style={styles.itemText}>Sunrise: {item.sunrise}</Text>
-              <Text style={styles.itemText}>Sunset: {item.sunset}</Text>
-            </View>
-          )}
-        />
-      )}
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <Text style={[styles.title, { color: theme.textColor }]}>Calendar for the next month</Text>
+      {error && <Text style={{ color: 'red' }}>Error: {error}</Text>}
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.date}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={[styles.text, { color: theme.textColor }]}>Date: {item.date}</Text>
+            <Text style={[styles.text, { color: theme.textColor }]}>Sunrise: {item.sunrise}</Text>
+            <Text style={[styles.text, { color: theme.textColor }]}>Sunset: {item.sunset}</Text>
+            <Text style={[styles.text, { color: theme.textColor }]}>Dawn: {item.dawn}</Text>
+            <Text style={[styles.text, { color: theme.textColor }]}>Dusk: {item.dusk}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -72,26 +59,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 50,
-  },
   title: {
     fontSize: 23,
     fontWeight: 'bold',
-    marginLeft: 16,
-  },
-  error: {
-    color: 'red',
     marginBottom: 16,
   },
-  itemContainer: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  item: {
+    paddingVertical: 8,
   },
-  itemText: {
+  text: {
     fontSize: 18,
   },
 });

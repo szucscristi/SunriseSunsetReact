@@ -1,22 +1,21 @@
-// src/AppNavigator.js
+// src/AppNavigator.tsx
+
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import HomeScreen from '../screens/HomeScreen';
-import InfoScreen from '../screens/InfoScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TopTabNavigator from './TopTabNavigator';
 import CalendarScreen from '../screens/CalendarScreen';
+import InfoScreen from '../screens/InfoScreen';
+import { RootStackParamList } from '../src/types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const AppNavigator = () => {
+const AppNavigator: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
-        <Stack.Screen name="Info" component={InfoScreen} options={{ title: 'Info' }} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} options={{ title: 'Calendar' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator initialRouteName="TopTabs">
+      <Stack.Screen name="TopTabs" component={TopTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Calendar" component={CalendarScreen} options={{ headerShown: true, title: 'Calendar' }} />
+      <Stack.Screen name="Info" component={InfoScreen} options={{ headerShown: true, title: 'Information' }} />
+    </Stack.Navigator>
   );
 };
 

@@ -1,48 +1,32 @@
 // src/SunriseSunsetApi.tsx
-import axios from 'axios'
 
-const BASE_URL = 'https://api.sunrisesunset.io/';
+export interface SunriseSunsetData {
+  date: string;
+  sunrise: string;
+  sunset: string;
+  dawn: string;
+  dusk: string;
+}
 
-const api = axios.create({
-  baseURL: BASE_URL,
-});
+export interface SunriseSunsetResponse {
+  results: SunriseSunsetData;
+}
 
-interface SunriseSunsetResponse {
-  results: {
-    sunrise: string;
-    sunset: string;
-    // Add other fields from the response if needed
+export interface SunriseSunsetRangeResponse {
+  results: SunriseSunsetData[];
+}
+
+export const getSunriseSunset = async (latitude: number, longitude: number, date?: string): Promise<SunriseSunsetResponse> => {
+  const response = await fetch(
+    `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}${date ? `&date=${date}` : ''}`
+  );
+  const data = await response.json();
+  return {
+    results: {
+      ...data.results,
+      date: date || new Date().toISOString().split('T')[0], // Use the provided date or today's date
+    },
   };
-  status: string;
-}
-
-interface SunriseSunsetRangeResponse {
-  resultsList: {
-    sunrise: string;
-    sunset: string;
-    // Add other fields from the response if needed
-  }[];
-  status: string;
-}
-
-export const getSunriseSunset = async (
-  latitude: number,
-  longitude: number,
-  date: string | null = null
-): Promise<SunriseSunsetResponse> => {
-  try {
-    const response = await api.get<SunriseSunsetResponse>('json', {
-      params: {
-        lat: latitude,
-        lng: longitude,
-        date: date,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 };
 
 export const getSunriseSunsetRange = async (
@@ -51,18 +35,18 @@ export const getSunriseSunsetRange = async (
   startDate: string,
   endDate: string
 ): Promise<SunriseSunsetRangeResponse> => {
-  try {
-    const response = await api.get<SunriseSunsetRangeResponse>('json', {
-      params: {
-        lat: latitude,
-        lng: longitude,
-        date_start: startDate,
-        date_end: endDate,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  const response = await fetch(
+    `https://api.sunrisesunset.io/json?lat=${latitude}&lng=${longitude}&date_start=${startDate}&date_end=${endDate}`
+  );
+  const data = await response.json();
+  return { results: data.results };
+};
+
+export const getTomorrowSunriseSunset = async (latitude: number, longitude: number): Promise<SunriseSunsetResponse> => {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const tomorrowString = tomorrow.toISOString().split('T')[0];
+
+  return getSunriseSunset(latitude, longitude, tomorrowString);
 };

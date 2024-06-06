@@ -1,72 +1,75 @@
-/*import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../src/types';
+import { useTheme } from '../src/themeContext';
 
-const ExploreScreen = () => {
-    const [countries, setCountries] = useState([]);
-    const navigation = useNavigation();
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Info'>;
 
-    useEffect(() => {
-        fetchCountries();
-    }, []);
+interface Country {
+  key: string;
+  latitude: number;
+  longitude: number;
+  name: string;
+}
 
-    const fetchCountries = async () => {
-        try {
-            const response = await fetch('https://example.com/countries.json'); // Replace with actual path to countries.json
-            const data = await response.json();
-            setCountries(data);
-        } catch (error) {
-            console.error(error);
-        }
+const ExploreScreen: React.FC = () => {
+  const { theme } = useTheme();
+  const navigation = useNavigation<NavigationProp>();
+  const [countries, setCountries] = useState<Country[]>([]);
+
+  useEffect(() => {
+    const loadCountries = async () => {
+      const response = await fetch('../assets/countries.json'); // Ensure the correct path
+      const data = await response.json();
+      setCountries(data);
     };
 
-    const renderCountryItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.itemContainer}
-            onPress={() =>
-                navigation.navigate('InfoScreen', {
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                    location: item.name,
-                })
-            }
-        >
-            <Image source={{ uri: item.flagUrl }} style={styles.flag} /> {/}
-            <Text style={styles.itemText}>{item.name}</Text>
-        </TouchableOpacity>
-    );
+    loadCountries();
+  }, []);
 
-    return (
-        <View style={styles.container}>
-            <FlatList
-                data={countries}
-                renderItem={renderCountryItem}
-                keyExtractor={(item) => item.name}
-            />
-        </View>
-    );
+  const renderItem = ({ item }: { item: Country }) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() =>
+        navigation.navigate('Info', {
+          latitude: item.latitude,
+          longitude: item.longitude,
+          country: item.name,
+        })
+      }
+    >
+      <Text style={[styles.text, { color: theme.textColor }]}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <FlatList
+        data={countries}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.key}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    itemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-    },
-    flag: {
-        width: 40,
-        height: 40,
-        marginRight: 16,
-    },
-    itemText: {
-        fontSize: 18,
-    },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  text: {
+    fontSize: 18,
+  },
 });
 
-export default ExploreScreen;*/
+export default ExploreScreen;

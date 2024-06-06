@@ -1,67 +1,58 @@
-/*import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Switch, Alert } from 'react-native';
+import * as Location from 'expo-location';
+import { useTheme } from '../src/themeContext';
 
-const SettingsScreen = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-    const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
+const SettingsScreen: React.FC = () => {
+  const { isDarkTheme, theme, toggleTheme } = useTheme();
+  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 
-    const toggleDarkMode = () => setIsDarkMode((previousState) => !previousState);
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.getPermissionsAsync();
+      setIsLocationEnabled(status === 'granted');
+    })();
+  }, []);
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Settings</Text>
-            <View style={styles.settingItem}>
-                <Text style={styles.settingText}>Dark Mode</Text>
-                <Switch
-                    onValueChange={toggleDarkMode}
-                    value={isDarkMode}
-                />
-            </View>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter default latitude"
-                value={latitude}
-                onChangeText={setLatitude}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Enter default longitude"
-                value={longitude}
-                onChangeText={setLongitude}
-            />
-            <Button title="Save" onPress={() => {}} />
-        </View>
-    );
+  const handleLocationPermissionToggle = async () => {
+    if (isLocationEnabled) {
+      Alert.alert("Location permission can't be turned off from the app settings");
+    } else {
+      const { status } = await Location.requestPermissionsAsync();
+      setIsLocationEnabled(status === 'granted');
+    }
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <View style={styles.settingItem}>
+        <Text style={[styles.settingText, { color: theme.textColor }]}>Dark Theme</Text>
+        <Switch value={isDarkTheme} onValueChange={toggleTheme} />
+      </View>
+      <View style={styles.settingItem}>
+        <Text style={[styles.settingText, { color: theme.textColor }]}>Location Permission</Text>
+        <Switch value={isLocationEnabled} onValueChange={handleLocationPermissionToggle} />
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    settingItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    settingText: {
-        fontSize: 18,
-    },
-    input: {
-        width: '100%',
-        padding: 8,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 4,
-    },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  settingText: {
+    fontSize: 18,
+  },
 });
 
-export default SettingsScreen;*/
+export default SettingsScreen;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Switch, Alert } from 'react-native';
 import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../src/themeContext';
 
 const SettingsScreen: React.FC = () => {
@@ -8,11 +9,40 @@ const SettingsScreen: React.FC = () => {
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.getPermissionsAsync();
-      setIsLocationEnabled(status === 'granted');
-    })();
+    const loadSettings = async () => {
+      const savedTheme = await AsyncStorage.getItem('isDarkTheme');
+      if (savedTheme !== null) {
+        const isDark = JSON.parse(savedTheme);
+        if (isDark !== isDarkTheme) {
+          toggleTheme();
+        }
+      }
+
+      const savedLocationEnabled = await AsyncStorage.getItem('isLocationEnabled');
+      if (savedLocationEnabled !== null) {
+        setIsLocationEnabled(JSON.parse(savedLocationEnabled));
+      } else {
+        const { status } = await Location.getPermissionsAsync();
+        setIsLocationEnabled(status === 'granted');
+      }
+    };
+
+    loadSettings();
   }, []);
+
+  useEffect(() => {
+    const saveSettings = async () => {
+      await AsyncStorage.setItem('isDarkTheme', JSON.stringify(isDarkTheme));
+    };
+    saveSettings();
+  }, [isDarkTheme]);
+
+  useEffect(() => {
+    const saveSettings = async () => {
+      await AsyncStorage.setItem('isLocationEnabled', JSON.stringify(isLocationEnabled));
+    };
+    saveSettings();
+  }, [isLocationEnabled]);
 
   const handleLocationPermissionToggle = async () => {
     if (isLocationEnabled) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../src/types';
@@ -40,6 +40,10 @@ const ExploreScreen: React.FC = () => {
         })
       }
     >
+      <Image
+        source={{ uri: `assets/flags/${item.key}.png` }}
+        style={styles.flag}
+      />
       <Text style={[styles.text, { color: theme.textColor }]}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -69,6 +73,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    marginLeft: 8,
+  },
+  flag: {
+    width: 32,
+    height: 32,
   },
 });
 

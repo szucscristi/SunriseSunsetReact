@@ -26,7 +26,7 @@ const HomeScreen: React.FC = () => {
       <Text style={[styles.title, { color: theme.textColor }]}>SunriseSunset</Text>
       <TextInput
         style={[styles.input, { color: theme.textColor, borderColor: theme.textColor }]}
-        placeholder="Latitude"
+        placeholder="Enter latitude"
         placeholderTextColor={theme.textColor}
         value={latitude}
         onChangeText={setLatitude}
@@ -34,13 +34,13 @@ const HomeScreen: React.FC = () => {
       />
       <TextInput
         style={[styles.input, { color: theme.textColor, borderColor: theme.textColor }]}
-        placeholder="Longitude"
+        placeholder="Enter longitude"
         placeholderTextColor={theme.textColor}
         value={longitude}
         onChangeText={setLongitude}
         keyboardType="numeric"
       />
-      <Button title="Get Info" onPress={goToInfoScreen} />
+      <Button title="Search" onPress={goToInfoScreen} />
     </View>
   );
 };

@@ -21,7 +21,7 @@ const ExploreScreen: React.FC = () => {
 
   useEffect(() => {
     const loadCountries = async () => {
-      const response = await fetch('../assets/countries.json'); // Ensure the correct path
+      const response = await fetch('../assets/countries.json');
       const data = await response.json();
       setCountries(data);
     };

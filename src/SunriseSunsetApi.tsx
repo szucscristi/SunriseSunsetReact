@@ -1,4 +1,4 @@
-// src/SunriseSunsetApi.tsx
+
 
 export interface SunriseSunsetData {
   date: string;
@@ -24,7 +24,7 @@ export const getSunriseSunset = async (latitude: number, longitude: number, date
   return {
     results: {
       ...data.results,
-      date: date || new Date().toISOString().split('T')[0], // Use the provided date or today's date
+      date: date || new Date().toISOString().split('T')[0],
     },
   };
 };

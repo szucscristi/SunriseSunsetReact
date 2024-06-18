@@ -43,23 +43,40 @@ const MyLocationScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={theme.textColor} />
       </View>
     );
   }
 
   if (errorMsg) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>{errorMsg}</Text>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        <Text style={[styles.errorText, { color: theme.textColor }]}>{errorMsg}</Text>
       </View>
     );
   }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style = {{color: theme.textColor}}>Location fetched!</Text>
-      <Button title="Sunrise and sunset times from your location." onPress={handleNavigate} />
+      {location && (
+        <>
+          <Text style={[styles.infoText, { color: theme.textColor }]}>
+            Your location information:
+          </Text>
+          <Text style={[styles.infoText, { color: theme.textColor }]}>
+            Latitude: {location.coords.latitude}
+          </Text>
+          <Text style={[styles.infoText, { color: theme.textColor }]}>
+            Longitude: {location.coords.longitude}
+          </Text>
+        </>
+      )}
+      <View style={styles.buttonContainer}>
+        <Button
+          title="See sunrise and sunset times"
+          onPress={handleNavigate}
+        />
+      </View>
     </View>
   );
 };
@@ -69,9 +86,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+  },
+  infoText: {
+    fontSize: 18,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    marginTop: 20,
+    width: '80%',
   },
   errorText: {
+    fontSize: 18,
     color: 'red',
+    textAlign: 'center',
   },
 });
 

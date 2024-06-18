@@ -14,7 +14,7 @@ const AppNavigator: React.FC = () => {
       <Stack.Screen name="TopTabs" component={TopTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="MyLocation" component={MyLocationScreen} />
       <Stack.Screen name="Calendar" component={CalendarScreen} options={{ headerShown: true, title: 'Calendar' }} />
-      <Stack.Screen name="Info" component={InfoScreen} options={{ headerShown: true, title: 'Information' }} />
+      <Stack.Screen name="Info" component={InfoScreen} options={{ headerShown: true, title: 'Sunrise and sunset times' }} />
     </Stack.Navigator>
   );
 };

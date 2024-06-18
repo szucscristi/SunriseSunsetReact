@@ -48,14 +48,18 @@ const InfoScreen: React.FC = () => {
           <>
             <SunriseInfo title="Sunrise" time={todayData.sunrise} />
             <Text style={[styles.infoText, { color: theme.textColor }]}>Dawn: {todayData.dawn}</Text>
-            <Text style={[styles.highlightText, { color: theme.textColor }]}>
-              Sunrise today in {country} will be at {todayData.sunrise}.
-            </Text>
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.highlightText, { color: theme.textColor }]}>
+                Sunrise today in {country} will be at {todayData.sunrise}.
+              </Text>
+            </View>
             <SunsetInfo title="Sunset" time={todayData.sunset} />
             <Text style={[styles.infoText, { color: theme.textColor }]}>Dusk: {todayData.dusk}</Text>
-            <Text style={[styles.highlightText, { color: theme.textColor }]}>
-              Sunset today in {country} will be at {todayData.sunset}.
-            </Text>
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.highlightText, { color: theme.textColor }]}>
+                Sunset today in {country} will be at {todayData.sunset}.
+              </Text>
+            </View>
           </>
         ) : (
           <Text style={[styles.infoText, { color: theme.textColor }]}>Loading...</Text>
@@ -68,14 +72,18 @@ const InfoScreen: React.FC = () => {
           <>
             <SunriseInfo title="Sunrise" time={tomorrowData.sunrise} />
             <Text style={[styles.infoText, { color: theme.textColor }]}>Dawn: {tomorrowData.dawn}</Text>
-            <Text style={[styles.highlightText, { color: theme.textColor }]}>
-              Sunrise tomorrow in {country} will be at {tomorrowData.sunrise}.
-            </Text>
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.highlightText, { color: theme.textColor }]}>
+                Sunrise tomorrow in {country} will be at {tomorrowData.sunrise}.
+              </Text>
+            </View>
             <SunsetInfo title="Sunset" time={tomorrowData.sunset} />
             <Text style={[styles.infoText, { color: theme.textColor }]}>Dusk: {tomorrowData.dusk}</Text>
-            <Text style={[styles.highlightText, { color: theme.textColor }]}>
-              Sunset tomorrow in {country} will be at {tomorrowData.sunset}.
-            </Text>
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.highlightText, { color: theme.textColor }]}>
+                Sunset tomorrow in {country} will be at {tomorrowData.sunset}.
+              </Text>
+            </View>
           </>
         ) : (
           <Text style={[styles.infoText, { color: theme.textColor }]}>Loading...</Text>
@@ -118,12 +126,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 60,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 16,
+    textAlign: 'center',
   },
   infoContainer: {
     alignItems: 'center',
@@ -132,10 +141,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   infoText: {
     fontSize: 16,
     marginBottom: 8,
+    textAlign: 'center',
   },
   highlightText: {
     fontSize: 16,
@@ -143,6 +154,11 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: 'red',
     marginBottom: 16,
+    textAlign: 'center',
+  },
+  centeredContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
   },
   image: {
     width: 64,
